@@ -44,7 +44,7 @@ public class Home extends JFrame {
 	 * Create the frame.
 	 */
 	public Home() {
-		setTitle("My MTG Collection");
+		setTitle("Andrii");
 
 		JButton btnNewButton = new JButton("New button");
 		getContentPane().add(btnNewButton, BorderLayout.CENTER);
