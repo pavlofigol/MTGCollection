@@ -10,10 +10,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import com.toedter.components.JSpinField;
 
 public class Home extends JFrame {
 
@@ -44,12 +49,31 @@ public class Home extends JFrame {
 	 * Create the frame.
 	 */
 	public Home() {
+
+		ArrayList<Card> collection = new ArrayList<Card>();
+		collection.add(new Card("id", "Ancient Copper Dragon", "Creature", new ArrayList<>(Arrays.asList("R")),
+				"4{R}{R}",
+				"https://cards.scryfall.io/normal/front/3/8/3836dddd-a7e4-499f-ad49-ce298aa65720.jpg?1674136426",
+				"https://scryfall.com/card/clb/161/ancient-copper-dragon?utm_source=api", "R", 2));
+
+		collection.add(new Card("id2", "Ancient Copper Dragon 2", "Creature", new ArrayList<>(Arrays.asList("R")),
+				"4{R}{R}",
+				"https://cards.scryfall.io/normal/front/3/8/3836dddd-a7e4-499f-ad49-ce298aa65720.jpg?1674136426",
+				"https://scryfall.com/card/clb/161/ancient-copper-dragon?utm_source=api", "R", 2));
+
+		collection.add(new Card("id3", "Ancient Copper Dragon 3", "Creature", new ArrayList<>(Arrays.asList("R")),
+				"4{R}{R}",
+				"https://cards.scryfall.io/normal/front/3/8/3836dddd-a7e4-499f-ad49-ce298aa65720.jpg?1674136426",
+				"https://scryfall.com/card/clb/161/ancient-copper-dragon?utm_source=api", "R", 2));
+
+		collection.get(0).printCardNameToConsole();
+
 		setTitle("Andrii is the best");
 
 		JButton btnNewButton = new JButton("New button");
 		getContentPane().add(btnNewButton, BorderLayout.CENTER);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 878, 546);
+		setBounds(100, 100, 880, 546);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -59,15 +83,36 @@ public class Home extends JFrame {
 		JButton btnNewButton_1 = new JButton("Seach for cards");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				clickMe();
+				openSearchResults(collection);
 			}
 		});
 		btnNewButton_1.setBounds(264, 11, 132, 23);
 		contentPane.add(btnNewButton_1);
 
-		table = new JTable();
-		table.setBounds(17, 171, 655, 325);
-		contentPane.add(table);
+		// Create a DefaultTableModel
+		DefaultTableModel tableModel = new DefaultTableModel();
+
+		// Add columns to the model
+		tableModel.addColumn("Name");
+		tableModel.addColumn("Type");
+		tableModel.addColumn("Rarity");
+		tableModel.addColumn("Colors");
+		tableModel.addColumn("Mana Cost");
+		tableModel.addColumn("Quantity");
+
+		// Add data to the model
+		for (Card card : collection) {
+			tableModel.addRow(
+					new Object[] { card.name, card.type, card.rarity, card.colors, card.manaCost, card.quantity });
+		}
+
+		table = new JTable(tableModel);
+
+		// Create a JScrollPane to hold the JTable
+		JScrollPane jScrollPane = new JScrollPane(table);
+		jScrollPane.setBounds(17, 171, 655, 325);
+		// Add the JScrollPane to the JFrame
+		contentPane.add(jScrollPane);
 
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setBounds(682, 171, 161, 212);
@@ -137,20 +182,21 @@ public class Home extends JFrame {
 			comboBox_1.setModel(new DefaultComboBoxModel(
 					new String[] { "Exactly these colors", "Including these colors", "At most these colors" }));
 			comboBox_1.setSelectedIndex(0);
+
 			btnNewButton_2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 				}
 			});
-
-			JButton btnNewButton_3 = new JButton("Edit");
-			btnNewButton_3.setBounds(682, 440, 161, 23);
-			contentPane.add(btnNewButton_3);
 
 			JButton btnNewButton_3_1 = new JButton("Delete");
 			btnNewButton_3_1.setBounds(682, 473, 161, 23);
 			contentPane.add(btnNewButton_3_1);
 
 			JButton btnNewButton_3_2 = new JButton("Open on Scryfall.com");
+			btnNewButton_3_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
 			btnNewButton_3_2.setBounds(682, 406, 161, 23);
 			contentPane.add(btnNewButton_3_2);
 
@@ -158,13 +204,35 @@ public class Home extends JFrame {
 			textField.setBounds(17, 12, 237, 20);
 			contentPane.add(textField);
 			textField.setColumns(10);
+
+			JButton btnNewButton_3_1_1 = new JButton("Update");
+			btnNewButton_3_1_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnNewButton_3_1_1.setBounds(722, 440, 121, 23);
+			contentPane.add(btnNewButton_3_1_1);
+
+			JSpinField spinField = new JSpinField();
+			spinField.setBounds(682, 442, 30, 20);
+			contentPane.add(spinField);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void clickMe() {
-		System.out.println("I am clicked");
+	public void openSearchResults(ArrayList<Card> collection) {
+
+		// Open the CardDialog
+		CardDialog cardDialog = new CardDialog(this, collection);
+		cardDialog.setVisible(true);
+
+		// Retrieve the selected card
+		Card selectedCard = cardDialog.getSelectedCard();
+		if (selectedCard != null) {
+			// Do something with the selected card, e.g., add it to the collection
+			System.out.println("Added card to collection: " + selectedCard.getName());
+		}
 	}
 }
